@@ -1,0 +1,113 @@
+.form {
+  max-width: 420px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #3b82f6; /* primary */
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #111827;
+  background-color: #fff;
+  transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+}
+
+.input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  outline: none;
+}
+
+.button {
+  width: 100%;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 500;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.25s ease-in-out, transform 0.2s;
+  margin-top: 0.5rem;
+}
+
+.button:hover:not(:disabled) {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.button:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.error,
+.success {
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.error {
+  color: #ef4444;
+}
+
+.success {
+  color: #10b981;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .form {
+    padding: 1.25rem;
+    margin: 2rem 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .input,
+  .button {
+    font-size: 0.95rem;
+    padding: 0.65rem 0.9rem;
+  }
+}
+
+.loginLink {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.link {
+  color: #3b82f6;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
