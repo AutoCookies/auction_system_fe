@@ -1,45 +1,45 @@
 import ENVARS from "@/config/env";
 
-export async function handleCreateAuctionDetails({
+export const handleCreateAuctionDetails = async ({
   auctionSessionId,
   productId,
   startingPrice,
   bidStep,
-  endDate,
-  token,
-}) {
+  endDate
+}) => {
   try {
     const res = await fetch(`${ENVARS.API_URL}/api/auction/create-details`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      credentials: "include",
       body: JSON.stringify({
         auctionSessionId,
         productId,
         startingPrice,
         bidStep,
-        endDate,
-      }),
+        endDate
+      })
     });
 
     const data = await res.json();
 
-    return res.ok && data.success
-      ? {
-          success: true,
-          data: data.data,
-          message: data.message,
-        }
-      : {
-          success: false,
-          message: data.message || "Lỗi không xác định",
-        };
+    if (!res.ok || data.error) {
+      return {
+        success: false,
+        message: data.message || "Tạo chi tiết đấu giá thất bại"
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message || "Tạo thành công",
+      data: data.data
+    };
   } catch (error) {
     return {
       success: false,
-      message: error.message || "Không thể kết nối tới máy chủ",
+      message: error.message || "Lỗi kết nối đến server"
     };
   }
-}
+};

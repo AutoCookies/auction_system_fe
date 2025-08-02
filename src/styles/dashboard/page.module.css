@@ -152,3 +152,43 @@
   border-color: #0070f3;
   font-weight: 600;
 }
+
+.detailContainer {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.detailList {
+  margin-top: 1rem;
+  list-style: none;
+  padding-left: 0;
+}
+
+.detailItem {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.popupWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popupContainer {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 100%;
+}
