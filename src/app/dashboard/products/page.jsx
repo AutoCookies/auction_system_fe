@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { handleGetAllProducts } from "@/utils/product/handleGetAllProduct.js";
 import styles from "@/styles/dashboard/products/page.module.css";
+import ProductDetail from "@/components/ProductDetail";
 
 export default function ProductListPage() {
   const [products, setProducts] = useState([]);
@@ -12,8 +13,22 @@ export default function ProductListPage() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
-  const router = useRouter(); // dùng để điều hướng
+  const router = useRouter();
+
+  const handleProductUpdated = (updatedProduct) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product._id === updatedProduct._id ? updatedProduct : product
+      )
+    );
+  };
+
+  const handleProductDeleted = (deletedProductId) => {
+    setProducts((prev) => prev.filter((p) => p._id !== deletedProductId));
+    setSelectedProductId(null); // Đóng ProductDetail
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -42,7 +57,7 @@ export default function ProductListPage() {
           className={styles.createButton}
           onClick={() => router.push("/dashboard/products/create")}
         >
-          ➕ Tạo sản phẩm
+          Tạo sản phẩm
         </button>
       </div>
 
@@ -55,7 +70,12 @@ export default function ProductListPage() {
       ) : (
         <ul className={styles.list}>
           {products.map((product) => (
-            <li key={product._id} className={styles.item}>
+            <li
+              key={product._id}
+              className={styles.item}
+              onClick={() => setSelectedProductId(product._id)} // 👈 Bắt sự kiện click
+              style={{ cursor: "pointer" }}
+            >
               <h3>{product.name}</h3>
               <p><strong>Giá:</strong> {product.price.toLocaleString()}đ</p>
               <p><strong>Mô tả:</strong> {product.description}</p>
@@ -64,7 +84,6 @@ export default function ProductListPage() {
         </ul>
       )}
 
-      {/* Pagination */}
       <div className={styles.pagination}>
         {Array.from({ length: totalPages }, (_, i) => (
           <button
@@ -77,6 +96,14 @@ export default function ProductListPage() {
           </button>
         ))}
       </div>
+      {selectedProductId && (
+        <ProductDetail
+          productId={selectedProductId}
+          onClose={() => setSelectedProductId(null)}
+          onUpdated={handleProductUpdated}
+          onDeleted={handleProductDeleted}
+        />
+      )}
     </main>
   );
 }

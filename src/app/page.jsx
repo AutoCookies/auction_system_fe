@@ -8,9 +8,9 @@ export default function Home() {
   const router = useRouter();
 
   const members = [
-    { name: "Văn Hà Minh Quân", role: "Frontend Developer, Business Analyst" },
-    { name: "Lê Đào Tấn Tài", role: "Backend Developer, Database Designer" },
-    { name: "Định Thái Sơn", role: "Database Designer, Documentation" },
+    { name: "Văn Hà Minh Quân", role: "Fullstack Developer, Business Analyst" },
+    { name: "Đinh Thái Sơn", role: "Database Designer, Documentation Maker" },
+    { name: "Lê Đào Tấn Tài", role: "Backend Developer, Presentation Slide Maker" },
   ];
 
   const handleStart = () => {

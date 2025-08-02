@@ -14,6 +14,7 @@ export default function CategoryListPage() {
   const [successMsg, setSuccessMsg] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // ✅ new
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -53,7 +54,7 @@ export default function CategoryListPage() {
   };
 
   const handleEdit = (category) => {
-    setEditingCategory({ ...category }); // Clone để chỉnh sửa
+    setEditingCategory({ ...category });
   };
 
   const handleEditChange = (e) => {
@@ -86,6 +87,11 @@ export default function CategoryListPage() {
     }
   };
 
+  // ✅ Lọc danh mục dựa trên searchTerm
+  const filteredCategories = categories.filter((category) =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <main className={styles.wrapper}>
       <div className={styles.header}>
@@ -94,6 +100,15 @@ export default function CategoryListPage() {
           + Thêm danh mục
         </button>
       </div>
+
+      {/* ✅ Thanh tìm kiếm */}
+      <input
+        type="text"
+        placeholder="🔍 Tìm kiếm theo tên..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className={styles.searchInput}
+      />
 
       {showForm && (
         <CreateCategoryForm
@@ -112,11 +127,11 @@ export default function CategoryListPage() {
       ) : (
         <>
           {successMsg && <p className={styles.success}>{successMsg}</p>}
-          {categories.length === 0 ? (
-            <p className={styles.empty}>Không có danh mục nào.</p>
+          {filteredCategories.length === 0 ? (
+            <p className={styles.empty}>Không có danh mục phù hợp.</p>
           ) : (
             <ul className={styles.list}>
-              {categories.map((category) => (
+              {filteredCategories.map((category) => (
                 <li key={category._id} className={styles.item}>
                   {editingCategory?._id === category._id ? (
                     <div className={styles.itemContent}>

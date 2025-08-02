@@ -172,6 +172,17 @@
   border: 1px solid #ccc;
 }
 
+.searchInput {
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 400px;
+}
+
+
 /* Responsive for small screens */
 @media (max-width: 600px) {
   .form,

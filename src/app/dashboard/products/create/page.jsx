@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/dashboard/products/create/page.module.css";
 import { handleCreateProduct } from "@/utils/product/handleCreateProduct";
-import { handleGetAllCategories } from "@/utils/categories/handleGetAllCategories"; // ✅ import mới
+import { handleGetAllCategories } from "@/utils/categories/handleGetAllCategories";
 
 export default function CreateProductPage() {
   const router = useRouter();
@@ -69,7 +69,7 @@ export default function CreateProductPage() {
 
     if (result.success) {
       setSuccessMsg("✅ Tạo sản phẩm thành công!");
-      setTimeout(() => router.push("/products"), 1500);
+      setTimeout(() => router.push("/dashboard/products"), 1500);
     } else {
       setErrorMsg(result.message || "❌ Lỗi khi tạo sản phẩm.");
     }

@@ -1,30 +1,34 @@
-export async function handleCreateAuctionSession({ sessionCode, timeAuction, token }) {
+import ENVARS from "@/config/env";
+
+export const handleCreateAuctionSession = async ({ description, timeAuction }) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auction/create`, {
+    const res = await fetch(`${ENVARS.API_URL}/api/auction/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}` // Cần token từ user đăng nhập
       },
-      body: JSON.stringify({
-        sessionCode,
-        timeAuction
-      })
+      credentials: "include", // Đảm bảo gửi cookie nếu cần
+      body: JSON.stringify({ description, timeAuction }),
     });
 
-    const data = await response.json();
+    const data = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+        message: data.message || "Tạo phiên đấu giá thất bại",
+      };
+    }
 
     return {
-      success: response.ok && !data.error,
-      message: data.message || "Có lỗi xảy ra",
-      data: data.data || null,
-      error: data.error || false
+      success: true,
+      data: data.data,
+      message: data.message || "Tạo phiên đấu giá thành công",
     };
   } catch (error) {
     return {
       success: false,
-      message: error.message || "Request failed",
-      error: true
+      message: error.message || "Lỗi kết nối đến server",
     };
   }
-}
+};

@@ -1,12 +1,10 @@
 import ENVARS from "@/config/env";
 
-export async function handleGetAllAuctionSession({ page = 1, limit = 10, search = "", status = "" }) {
+export async function handleGetAllAuctionSession({ page = 1, limit = 10 }) {
   try {
     const queryParams = new URLSearchParams({
       page,
-      limit,
-      ...(search && { search }),
-      ...(status && { status })
+      limit
     });
 
     const res = await fetch(`${ENVARS.API_URL}/api/auction?${queryParams.toString()}`, {
