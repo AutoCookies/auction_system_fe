@@ -1,52 +1,149 @@
+/* Container chính */
 .container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: "Segoe UI", sans-serif;
-  background-color: #f9f9f9;
+  background-color: #f4f6f8;
 }
 
+/* Header */
 .header {
-  background-color: #1e293b;
+  background-color: #1a237e;
   color: white;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 .logo {
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 700;
 }
 
+/* Nav */
 .nav {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .navLink {
   color: white;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s ease;
+  position: relative;
+  padding: 0.5rem 0;
 }
 
-.navLink:hover {
-  color: #38bdf8;
+.navLink::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background-color: #fff;
+  transition: width 0.3s;
 }
 
+.navLink:hover::after {
+  width: 100%;
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+}
+
+.dropdownToggle {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.dropdownToggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 160px;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  background-color: #f0f0f0;
+}
+
+/* Main */
 .main {
   flex: 1;
   padding: 2rem;
 }
 
+/* Footer */
 .footer {
-  background-color: #e2e8f0;
+  background-color: #e3e3e3;
   text-align: center;
   padding: 1rem;
-  font-size: 0.875rem;
-  color: #334155;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .main {
+    padding: 1rem;
+  }
 }

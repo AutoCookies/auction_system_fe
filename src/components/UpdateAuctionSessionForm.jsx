@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { handleCreateAuctionSession } from "@/utils/auction/handleCreateAuction";
+import { handleUpdateAuctionSession } from "@/utils/auction/handleUpdateAuctionSession";
 import { handleGetAllProducts } from "@/utils/product/handleGetAllProduct";
 import styles from "@/styles/components/CreateAuctionSessionForm.module.css";
 
-export default function CreateAuctionSessionForm({ onClose, onSuccess }) {
+export default function UpdateAuctionSessionForm({ initialData, onClose, onSuccess }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [timeAuction, setTimeAuction] = useState("");
@@ -26,34 +26,46 @@ export default function CreateAuctionSessionForm({ onClose, onSuccess }) {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name || "");
+      setDescription(initialData.description || "");
+      setTimeAuction(initialData.timeAuction?.slice(0, 16) || "");
+      setProductId(initialData.productId || "");
+      setStartingPrice(initialData.startingPrice || "");
+      setEndDate(initialData.endDate?.slice(0, 16) || "");
+    }
+  }, [initialData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
     setLoading(true);
 
-    const res = await handleCreateAuctionSession({
+    const updateData = {
       name,
       description,
       timeAuction,
       productId,
-      startingPrice,
+      startingPrice: Number(startingPrice),
       endDate,
-    });
+    };
 
+    const res = await handleUpdateAuctionSession(initialData._id, updateData);
     setLoading(false);
 
     if (!res.success) {
-      setError("Tạo phiên đấu giá thất bại: " + (res.message || ""));
+      setError("Cập nhật phiên đấu giá thất bại: " + (res.message || ""));
     } else {
-      setSuccessMsg("Tạo phiên đấu giá thành công!");
-      onSuccess?.();
+      setSuccessMsg("Cập nhật phiên đấu giá thành công!");
+      onSuccess?.(); // reload danh sách
     }
   };
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Tạo phiên đấu giá</h2>
+      <h2 className={styles.heading}>Cập nhật phiên đấu giá</h2>
       <form onSubmit={handleSubmit} className={styles.form}>
         <label className={styles.label}>
           Tên phiên:
@@ -99,8 +111,6 @@ export default function CreateAuctionSessionForm({ onClose, onSuccess }) {
               const selectedProduct = products.find((p) => p._id === selectedId);
               if (selectedProduct?.price != null) {
                 setStartingPrice(selectedProduct.price);
-              } else {
-                setStartingPrice("");
               }
             }}
             required
@@ -138,7 +148,7 @@ export default function CreateAuctionSessionForm({ onClose, onSuccess }) {
 
         <div className={styles.buttonRow}>
           <button type="submit" className={styles.submitButton} disabled={loading}>
-            {loading ? "Đang tạo..." : "Tạo"}
+            {loading ? "Đang cập nhật..." : "Cập nhật"}
           </button>
           <button type="button" className={styles.cancelButton} onClick={onClose}>
             Thoát

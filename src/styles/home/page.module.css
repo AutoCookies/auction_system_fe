@@ -1,131 +1,162 @@
-/* Wrapper layout */
 .wrapper {
-  max-width: 1024px;
+  padding: 2rem;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: sans-serif;
 }
 
-/* Title */
+.headerRow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
 .title {
   font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  text-align: center;
+  font-weight: bold;
   color: #333;
 }
 
-/* Message states */
 .loading,
 .error,
 .empty {
-  font-size: 1rem;
-  margin-top: 1rem;
   text-align: center;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  color: #777;
 }
 
-.error {
-  color: #d32f2f;
-}
-
-/* Auction list */
 .list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
 }
 
-/* Auction item */
 .item {
-  padding: 1.5rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fafafa;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease;
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  padding: 1.2rem;
+  transition: box-shadow 0.3s ease;
+  border: 1px solid #ddd;
 }
 
 .item:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.item h3 {
-  margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+.itemHeader h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: #222;
 }
 
 .item p {
-  margin: 0.25rem 0;
-  line-height: 1.5;
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+  color: #444;
 }
 
-/* Pagination */
-.pagination {
+.running {
+  color: #2e8b57; /* xanh lá đậm */
+  font-weight: 600;
+}
+
+.warning {
+  color: #d4a017; /* vàng */
+  font-weight: 600;
+}
+
+.expired {
+  color: #c0392b; /* đỏ */
+  font-weight: 600;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup {
+  background: white;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 95%;
+  padding: 2rem;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.popupTitle {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #666;
+}
+
+.pagination {
   margin-top: 2rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  text-align: center;
 }
 
 .pageButton {
+  margin: 0 5px;
   padding: 0.5rem 1rem;
-  border: 1px solid #999;
-  background-color: #f2f2f2;
+  border: 1px solid #aaa;
+  background: white;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  border-radius: 5px;
+  transition: all 0.2s ease;
 }
 
-.pageButton:hover {
-  background-color: #e0e0e0;
-  transform: translateY(-1px);
+.pageButton:hover:not(:disabled) {
+  background-color: #eee;
 }
 
 .activePage {
-  background-color: #1976d2;
+  background-color: #333;
   color: white;
-  cursor: default;
-  border-color: #1976d2;
+  border-color: #333;
 }
 
-/* Responsive design */
-@media screen and (max-width: 768px) {
-  .wrapper {
-    padding: 1.5rem 1rem;
-  }
-
+/* Responsive improvements */
+@media (max-width: 768px) {
   .title {
     font-size: 1.5rem;
+    text-align: center;
   }
 
-  .item {
+  .itemHeader h3 {
+    font-size: 1.1rem;
+  }
+
+  .popup {
     padding: 1rem;
   }
 
   .pageButton {
     padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .item h3 {
-    font-size: 1.1rem;
-  }
-
-  .item p {
-    font-size: 0.95rem;
-  }
-
-  .pagination {
-    gap: 0.25rem;
-  }
-
-  .pageButton {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.85rem;
   }
 }

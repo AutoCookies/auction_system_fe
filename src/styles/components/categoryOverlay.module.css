@@ -1,0 +1,65 @@
+/* styles/components/categoryOverlay.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0; /* shorthand for top: 0; right: 0; bottom: 0; left: 0 */
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: auto;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 20px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.categoryList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+  padding: 8px 0;
+  overflow-x: auto;
+}
+
+.categoryItem {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.categoryItem:hover {
+  background-color: #e0e0e0;
+}

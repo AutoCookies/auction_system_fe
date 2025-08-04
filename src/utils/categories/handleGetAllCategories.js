@@ -2,11 +2,12 @@ import ENVARS from "@/config/env";
 
 export async function handleGetAllCategories() {
   try {
-    const res = await fetch(`${ENVARS.API_URL}/api/category/get`, {
+    const res = await fetch(`${ENVARS.API_URL}/api/category/all`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // để gửi cookie nếu cần
       cache: "no-store", // optional: để không bị cache khi gọi từ server components
     });
 

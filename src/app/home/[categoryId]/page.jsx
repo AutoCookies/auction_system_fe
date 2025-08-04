@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { handleGetAllAuctionSession } from "@/utils/auction/handleGetAllAuctionSession";
+import { useParams } from "next/navigation";
+import { handleGetAuctionSessionsByCategory } from "@/utils/auction/handleGetAuctionSessionByCategory.js";
 import styles from "@/styles/home/page.module.css";
 import AuctionDetailsUser from "@/components/AuctionDetailsUser";
 
-export default function AuctionListPage() {
+export default function AuctionByCategoryPage() {
+  const { categoryId } = useParams();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [selectedSession, setSelectedSession] = useState(null);
   const [countdowns, setCountdowns] = useState({});
 
@@ -41,24 +41,21 @@ export default function AuctionListPage() {
     };
   };
 
-  const fetchSessions = async (pageToFetch = page) => {
+  const fetchSessions = async () => {
     setLoading(true);
-    const res = await handleGetAllAuctionSession({ page: pageToFetch });
-
+    const res = await handleGetAuctionSessionsByCategory(categoryId);
     if (res.success) {
-      setSessions(res.data || []);
-      setTotalPages(res.totalNoPage || 1);
+      setSessions(res.sessions || []);
       setErrorMsg("");
     } else {
       setErrorMsg(res.message || "Lỗi khi tải phiên đấu giá");
     }
-
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchSessions();
-  }, [page]);
+    if (categoryId) fetchSessions();
+  }, [categoryId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,15 +65,13 @@ export default function AuctionListPage() {
       });
       setCountdowns(newCountdowns);
     }, 1000);
-
     return () => clearInterval(interval);
   }, [sessions]);
-
 
   return (
     <main className={styles.wrapper}>
       <div className={styles.headerRow}>
-        <h1 className={styles.title}>Các phiên đấu giá đang diễn ra</h1>
+        <h1 className={styles.title}>Phiên đấu giá theo danh mục</h1>
       </div>
 
       {loading ? (
@@ -123,8 +118,8 @@ export default function AuctionListPage() {
                       countdowns[session._id]?.status === "expired"
                         ? styles.expired
                         : countdowns[session._id]?.status === "warning"
-                          ? styles.warning
-                          : styles.running
+                        ? styles.warning
+                        : styles.running
                     }
                   >
                     {countdowns[session._id]?.text || "..."}
@@ -136,7 +131,6 @@ export default function AuctionListPage() {
         </ul>
       )}
 
-      {/* Hiển thị chi tiết phiên đấu giá */}
       {selectedSession && (
         <div className={styles.overlay}>
           <div className={styles.popup}>
@@ -148,29 +142,14 @@ export default function AuctionListPage() {
             </button>
             <h2 className={styles.popupTitle}>{selectedSession.name}</h2>
             <AuctionDetailsUser
-              sessionId={selectedSession._id} // đổi tên prop
+              sessionId={selectedSession._id}
               description={selectedSession.description}
               productId={selectedSession.productId}
               startingPrice={selectedSession.startingPrice}
-              winnerId={selectedSession.winnerId}
             />
           </div>
         </div>
       )}
-
-      {/* Phân trang */}
-      <div className={styles.pagination}>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setPage(i + 1)}
-            disabled={page === i + 1}
-            className={`${styles.pageButton} ${page === i + 1 ? styles.activePage : ""}`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
     </main>
   );
 }

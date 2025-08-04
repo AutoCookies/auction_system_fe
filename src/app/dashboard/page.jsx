@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import { handleGetAllAuctionSession } from "@/utils/auction/handleGetAllAuctionSession";
 import styles from "@/styles/dashboard/page.module.css";
 import CreateAuctionSessionForm from "@/components/CreateAuctionSessionForm";
+import AuctionDetails from "@/components/AuctionDetails";
+import handleDeleteAuctionSession from "@/utils/auction/handleDeleteAuctionSession";
+import UpdateAuctionSessionForm from "@/components/UpdateAuctionSessionForm";
 
 export default function AdminDashboard() {
   const [sessions, setSessions] = useState([]);
@@ -12,8 +15,16 @@ export default function AdminDashboard() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedSession, setSelectedSession] = useState(null);
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [detailMode, setDetailMode] = useState(false);
 
-  // ✅ Tách ra hàm riêng để gọi lại được
+
+  const handleOpenDetails = (session) => {
+    setSelectedSession(session);
+    setDetailMode(true);
+  };
+
   const fetchSessions = async (pageToFetch = page) => {
     setLoading(true);
     const res = await handleGetAllAuctionSession({ page: pageToFetch });
@@ -37,11 +48,10 @@ export default function AdminDashboard() {
     setShowCreateForm(false);
   };
 
-  // ✅ Khi tạo thành công → đóng form và gọi lại fetch
   const handleSuccessCreate = () => {
     handleCloseForm();
-    fetchSessions(1); // load lại trang đầu
-    setPage(1); // reset về page 1
+    fetchSessions(1);
+    setPage(1);
   };
 
   return (
@@ -71,31 +81,124 @@ export default function AdminDashboard() {
         <p className={styles.empty}>Không có phiên đấu giá nào.</p>
       ) : (
         <ul className={styles.list}>
-          {sessions.map((session) => (
-            <li key={session._id} className={styles.item}>
-              <h3>{session.description || session.sessionCode}</h3>
-              <p>
-                <strong>Thời gian:</strong>{" "}
-                {new Date(session.timeAuction).toLocaleString()}
-              </p>
-              <p>
-                <strong>Trạng thái:</strong> {session.status}
-              </p>
-              {session.auctionDetail && (
-                <>
-                  <p>
-                    <strong>Giá khởi điểm:</strong> {session.auctionDetail.startPrice}
-                  </p>
-                  <p>
-                    <strong>Kết thúc:</strong>{" "}
-                    {new Date(session.auctionDetail.endDate).toLocaleString()}
-                  </p>
-                </>
-              )}
-            </li>
-          ))}
+          {sessions.map((session) => {
+            const start = new Date(session.timeAuction).toLocaleString("vi-VN", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            const end = new Date(session.endDate).toLocaleString("vi-VN", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            const handleDelete = async (e) => {
+              e.stopPropagation(); // Không trigger mở chi tiết
+              const confirm = window.confirm(`Xác nhận xóa phiên "${session.name}"?`);
+              if (!confirm) return;
+
+              const res = await handleDeleteAuctionSession(session._id);
+              if (res.success) {
+                alert("Xóa thành công");
+                fetchSessions(1);
+                setPage(1);
+              } else {
+                alert(`Lỗi: ${res.message}`);
+              }
+            };
+
+            return (
+              <li key={session._id} className={styles.item} style={{ cursor: "pointer" }} onClick={() => handleOpenDetails(session)}>
+                <div className={styles.itemHeader}>
+                  <h3>{session.name}</h3>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      const confirm = window.confirm(`Xác nhận xóa phiên "${session.name}"?`);
+                      if (!confirm) return;
+
+                      const res = await handleDeleteAuctionSession(session._id);
+                      if (res.success) {
+                        alert("Xóa thành công");
+                        fetchSessions(1);
+                        setPage(1);
+                      } else {
+                        alert(`Lỗi: ${res.message}`);
+                      }
+                    }}
+                  >
+                    Xóa
+                  </button>
+
+                  <button
+                    className={styles.updateButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedSession(session);
+                      setDetailMode(false); // 🛑 không bật chi tiết
+                      setShowUpdateForm(true);
+                    }}
+                    onClose={() => {
+                      setShowUpdateForm(false);
+                      setDetailMode(false);
+                    }}
+                  >
+                    Sửa
+                  </button>
+                </div>
+                <p><strong>Bắt đầu:</strong> {start}</p>
+                <p><strong>Kết thúc:</strong> {end}</p>
+              </li>
+            );
+          })}
         </ul>
       )}
+
+      {/* ✅ Mở popup khi chọn một session */}
+      {selectedSession && detailMode && (
+        <div className={styles.overlay}>
+          <div className={styles.popup}>
+            <button className={styles.closeButton} onClick={() => {
+              setSelectedSession(null);
+              setDetailMode(false);
+            }}>
+              ×
+            </button>
+            <h2 className={styles.popupTitle}>{selectedSession.name}</h2>
+            <AuctionDetails
+              sessionId={selectedSession._id}
+              description={selectedSession.description}
+              productId={selectedSession.productId}
+              startingPrice={selectedSession.startingPrice}
+              winnerId={selectedSession.winnerId} // Thêm prop winnerId
+            />
+          </div>
+        </div>
+      )}
+      {
+        showUpdateForm && selectedSession && (
+          <div className={styles.popupWrapper}>
+            <div className={styles.popupContainer}>
+              <UpdateAuctionSessionForm
+                initialData={selectedSession}
+                onClose={() => setShowUpdateForm(false)}
+                onSuccess={() => {
+                  setShowUpdateForm(false);
+                  fetchSessions(1);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </div>
+        )
+      }
 
       <div className={styles.pagination}>
         {Array.from({ length: totalPages }, (_, i) => (

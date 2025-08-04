@@ -1,24 +1,29 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { handleGetAllProducts } from "@/utils/product/handleGetAllProduct.js";
 import styles from "@/styles/dashboard/products/page.module.css";
 import ProductDetail from "@/components/ProductDetail";
 
 export default function ProductListPage() {
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // 👉 chứa toàn bộ
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [selectedProductId, setSelectedProductId] = useState(null);
 
   const router = useRouter();
 
+  // 🔍 Lọc sản phẩm theo tên (frontend)
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, allProducts]);
+
   const handleProductUpdated = (updatedProduct) => {
-    setProducts((prevProducts) =>
+    setAllProducts((prevProducts) =>
       prevProducts.map((product) =>
         product._id === updatedProduct._id ? updatedProduct : product
       )
@@ -26,18 +31,17 @@ export default function ProductListPage() {
   };
 
   const handleProductDeleted = (deletedProductId) => {
-    setProducts((prev) => prev.filter((p) => p._id !== deletedProductId));
-    setSelectedProductId(null); // Đóng ProductDetail
+    setAllProducts((prev) => prev.filter((p) => p._id !== deletedProductId));
+    setSelectedProductId(null);
   };
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
-      const result = await handleGetAllProducts({ page, limit });
+      const result = await handleGetAllProducts({ page: 1, limit: 1000 }); // tải nhiều lên để lọc frontend
 
       if (result.success) {
-        setProducts(result.data || []);
-        setTotalPages(result.totalNoPage || 1);
+        setAllProducts(result.data || []);
         setErrorMsg("");
       } else {
         setErrorMsg(result.message || "Lỗi khi tải sản phẩm");
@@ -47,10 +51,20 @@ export default function ProductListPage() {
     };
 
     fetchProducts();
-  }, [page]);
+  }, []);
 
   return (
     <main className={styles.wrapper}>
+      <div className={styles.searchContainer}>
+        <input
+          type="text"
+          placeholder="Tìm kiếm sản phẩm theo tên..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={styles.searchInput}
+        />
+      </div>
+
       <div className={styles.header}>
         <h1 className={styles.title}>Danh sách sản phẩm</h1>
         <button
@@ -65,15 +79,15 @@ export default function ProductListPage() {
         <p className={styles.loading}>Đang tải dữ liệu...</p>
       ) : errorMsg ? (
         <p className={styles.error}>{errorMsg}</p>
-      ) : products.length === 0 ? (
-        <p className={styles.empty}>Không có sản phẩm nào.</p>
+      ) : filteredProducts.length === 0 ? (
+        <p className={styles.empty}>Không tìm thấy sản phẩm phù hợp.</p>
       ) : (
         <ul className={styles.list}>
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <li
               key={product._id}
               className={styles.item}
-              onClick={() => setSelectedProductId(product._id)} // 👈 Bắt sự kiện click
+              onClick={() => setSelectedProductId(product._id)}
               style={{ cursor: "pointer" }}
             >
               <h3>{product.name}</h3>
@@ -84,18 +98,6 @@ export default function ProductListPage() {
         </ul>
       )}
 
-      <div className={styles.pagination}>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setPage(i + 1)}
-            disabled={page === i + 1}
-            className={`${styles.pageButton} ${page === i + 1 ? styles.activePage : ""}`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
       {selectedProductId && (
         <ProductDetail
           productId={selectedProductId}
