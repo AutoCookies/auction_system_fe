@@ -6,6 +6,12 @@ import { handleGetAllPendingInvoice } from "@/utils/invoice/handleGetAllPendingI
 import { handleGetAllPaidInvoice } from "@/utils/invoice/handleGetAllPaidInvoice";
 import styles from "@/styles/home/invoices/page.module.css";
 import InvoiceDetails from "@/components/InvoiceDetails";
+import { io } from "socket.io-client";
+import { handleGetInvoiceById } from "@/utils/invoice/handleGetInvoiceById";
+import ENVARS from "@/config/env";
+
+// ⚡ Kết nối socket
+const socket = io(ENVARS.API_URL);
 
 export default function InvoicePage() {
     const [invoices, setInvoices] = useState([]);
@@ -38,6 +44,32 @@ export default function InvoicePage() {
         }
 
         fetchInvoices();
+    }, [filter]);
+
+    useEffect(() => {
+        const handleNewInvoice = async ({ invoiceId }) => {
+            try {
+                const newInvoice = await handleGetInvoiceById(invoiceId);
+
+                // Kiểm tra filter hiện tại để quyết định có thêm vào hay không
+                const matchesFilter =
+                    filter === "all" ||
+                    (filter === "pending" && newInvoice.status === "Pending") ||
+                    (filter === "paid" && newInvoice.status === "Paid");
+
+                if (matchesFilter) {
+                    setInvoices((prev) => [newInvoice, ...prev]);
+                }
+            } catch (err) {
+                console.error("Không thể lấy hóa đơn mới từ socket:", err);
+            }
+        };
+
+        socket.on("invoiceCreated", handleNewInvoice);
+
+        return () => {
+            socket.off("invoiceCreated", handleNewInvoice);
+        };
     }, [filter]);
 
     if (loading) return <p>Đang tải hóa đơn...</p>;
