@@ -8,9 +8,7 @@ export default function Home() {
   const router = useRouter();
 
   const members = [
-    { name: "Văn Hà Minh Quân", role: "Fullstack Developer, Business Analyst" },
-    { name: "Đinh Thái Sơn", role: "Database Designer, Documentation Maker" },
-    { name: "Lê Đào Tấn Tài", role: "Backend Developer, Presentation Slide Maker" },
+    { name: "QTech", role: "Nhóm phát triển dự án phần mềm" },
   ];
 
   const handleStart = () => {
@@ -33,7 +31,7 @@ export default function Home() {
 
       <div className={styles.imageWrapper}>
         <Image
-          src="/hutech-university-logo.jpg"
+          src="/Gemini_Generated_Image_owm83gowm83gowm8.png"
           alt="Team Image"
           width={600}
           height={400}
