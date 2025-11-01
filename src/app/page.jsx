@@ -17,8 +17,8 @@ export default function Home() {
 
   return (
     <main className={styles.container}>
-      <h1 className={styles.title}>Chào mừng đến với dự án của chúng tôi!</h1>
-      <p className={styles.subtitle}>Nhóm gồm 3 thành viên cùng hợp tác phát triển ứng dụng.</p>
+      <h1 className={styles.title}>Đây là trang bắt đầu của dự án Website đấu giá trực tuyến</h1>
+      <p className={styles.subtitle}>QTech thành lập bởi QUan Van - AutoCookie</p>
 
       <div className={styles.cardContainer}>
         {members.map((member, index) => (
